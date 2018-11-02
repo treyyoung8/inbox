@@ -13,6 +13,7 @@ class App extends Component {
         messages: [],
         composeStatus: false,
         expand: false,
+        unread: 0,
     }
   }
 
@@ -20,11 +21,11 @@ class App extends Component {
     let response = await fetch('http://localhost:8082/api/messages',)
     let json = await response.json()
     // let selected = json.filter(message => message.selected)
-    // let unRead = json.filter(message => !message.read)
+    let currentUnread = json.filter(message => !message.read).length
 
     this.setState({
       messages: json,
-      
+      unread: currentUnread
     })
   }
 
@@ -34,10 +35,25 @@ class App extends Component {
     })
   }
 
-  changeRead = (messageId) => {
+  changeRead = async (messageId) => {
+    let message = {
+      messageIds: [messageId],
+      command: "read",
+      "read": true
+    }
+
+    const result = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(message),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+
     const newMessages = this.state.messages.map(message => {
       if (message.id === messageId) {
-        message.read = !message.read
+        message.read = true
       }
       return message
     })
@@ -46,7 +62,21 @@ class App extends Component {
     })
   }
 
-  changeStar = (messageId) => {
+  changeStar = async (messageId) => {
+    let message = {
+      messageIds: [messageId],
+      command: "star",
+      "star": ![messageId.star]
+    }
+
+    const result = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(message),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
     const newMessages = this.state.messages.map(message => {
       if (message.id === messageId) {
         message.starred = !message.starred
@@ -58,7 +88,34 @@ class App extends Component {
     })
   }
 
-  changeSelection = (messageId) => {
+  changeToUnread = async (messageId) => {
+    let message = {
+      messageIds: [messageId],
+      command: "read",
+      "read": false
+    }
+
+    const result = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(message),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+
+    const newMessages = this.state.messages.map(message => {
+      if (message.id === messageId) {
+        message.read = false
+      }
+      return message
+    })
+    this.setState({
+      messages: newMessages
+    })
+  }
+
+  changeSelection = async (messageId) => {
     const newMessages = this.state.messages.map(message => {
       if (message.id === messageId) {
         message.selected = !message.selected
@@ -70,21 +127,41 @@ class App extends Component {
     })
   }
 
-  expandBox = (event) => {
+  expandBox = (messageId) => {
+    const newExpand = this.state.messages.map(message => {
+      if (message.id === messageId) {
+        this.state.expand = !this.state.expand
+      }
+    })
     this.setState({
-      expand: !this.state.expand
+      expand: newExpand
     })
   }
 
-  // markRead = () => {
-  //   const newMessages = this.state.messages.map(message => {
+  markRead = () => {
+    const newMessages = this.state.messages.filter(message => message.selected === true)
+    newMessages.forEach(message => this.changeRead(message.id))
+  }
+
+  markUnread = () => {
+    const newMessages = this.state.messages.filter(message => message.selected === true)
+    newMessages.forEach(message => this.changeToUnread(message.id))
+  }
+
+  currentUnread = () => {
+    const updatedUnread = this.state.messages.filter(message => message.read == false)
+    this.setState({
+      unread: updatedUnread.length
+    })
+  }
+
+  // selectionStage = () => {
+  //   const selectionStatus = this.state.messages.map(message => {
   //     if (message.selected === true) {
-  //     message.read = true
+  //       return 'fa-check-square-o'
+  //     } else (message.selected === false) {
+  //       return 'fa-square-o'
   //     }
-  //     return newMessages
-  //   })
-  //   this.setState({
-  //     messages: newMessages
   //   })
   // }
   
@@ -93,7 +170,12 @@ class App extends Component {
       <>
       <Header />
       <Toolbar  showCompose={this.showCompose}
-                selectAll={this.markRead} />
+                markRead={this.markRead}
+                markUnread={this.markUnread}
+                unread={this.state.unread}
+                currentUnread={this.currentUnread}
+                messages={this.state.messages}
+                selectionStage={this.selectionStage} />
       {this.state.composeStatus && <Compose />}
       <MessageList  messages={this.state.messages}
                     starred={this.state.starred}
@@ -101,7 +183,8 @@ class App extends Component {
                     changeRead={this.changeRead}
                     expandBox={this.expandBox}
                     expand={this.state.expand}
-                    changeSelection={this.changeSelection} />
+                    changeSelection={this.changeSelection}
+                    currentUnread={this.currentUnread} />
       </>
     );
   }

@@ -17,6 +17,7 @@ return(
             expandBox={props.expandBox}
             expand={props.expand}
             changeSelection={props.changeSelection}
+            currentUnread={props.currentUnread}
             />
         )
     )

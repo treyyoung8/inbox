@@ -2,10 +2,21 @@ import React from 'react';
 import MessageList from './messageList';
 import Body from './body';
 
-const Message = ({starred, changeStar, subject, read, id, changeRead, expandBox, body, expand, selected, changeSelection}) => {
+const Message = ({starred, changeStar, subject, read, id, changeRead, expandBox, body, expand, selected, changeSelection, currentUnread, labels}) => {
+
+    const multipleFunctions = (id) => {
+        changeRead(id)
+        currentUnread()
+        expandBox(id)
+    }
+
+    const dev = labels.includes('dev')
+    const personal = labels.includes('personal')
+    const gschool = labels.includes('gschool')
+    console.log(dev)
     return (
         <>
-            <div className={`row message ${read ? 'read' : 'unread'} ${(typeof selected !== 'undefined') && selected === true ? 'selected' : ''}`} onClick={() => expandBox(id)}>
+            <div className={`row message ${read ? 'read' : 'unread'} ${(typeof selected !== 'undefined') && selected === true ? 'selected' : ''}`}>
                 <div className='col-xs-1'>
                     <div className='row'>
                         <div className='col-xs-2'>
@@ -16,9 +27,10 @@ const Message = ({starred, changeStar, subject, read, id, changeRead, expandBox,
                         </div>
                     </div>
                 </div>
-                <div className='col-xs-11'>
-                    <span className='label label-warning'>dev</span>
-                    <span className='label label-warning'>gschool</span>
+                <div className='col-xs-11' onClick={() => multipleFunctions(id)}>
+                    {dev && <span className='label label-warning'>dev</span>}
+                    {personal && <span className='label label-warning'>personal</span>}
+                    {gschool && <span className='label label-warning'>gschool</span>}
                     <a>
                         {subject}
                     </a>

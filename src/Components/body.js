@@ -1,5 +1,5 @@
 import React from 'react';
-import Message from './messages'
+import Message from './messages';
 
 const Body = ({body}) => {
     return (
