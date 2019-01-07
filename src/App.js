@@ -155,13 +155,45 @@ class App extends Component {
     })
   }
 
+  // addLabel = () => {
+  //   const newMessages = this.state.messages.map(message => message.selected === true)
+  //   newMessages.forEach(message => this.labelType())
+  // }
+
+  // labelType = (event) => {
+  //   const newMessages = this.state.messages.map(message => {
+  //     if (message.selected === true) {
+  //       message.labels = event.target.value
+  //     }
+  //     return message
+  //   })
+  //   this.setState({
+  //     messages: newMessages
+  //   })
+  // }
+
   // selectionStage = () => {
   //   const selectionStatus = this.state.messages.map(message => {
-  //     if (message.selected === true) {
+  //     if (message.selected === true && message.selected === this.state.messages.length) {
   //       return 'fa-check-square-o'
-  //     } else (message.selected === false) {
+  //     } else if (message.selected === false) {
   //       return 'fa-square-o'
   //     }
+  //   })
+  //   return selectionStatus
+  // }
+
+  // brokenTestForSelectAll = () => {
+  //   const newMessages = this.state.mesages.map(message => message.selected === true)
+  //   newMessages.forEach(message => this.changeToTrueSelect(message.id))
+  // }
+
+  // selectAll = () => {
+  //   const newMessages = this.state.messages.map(message => {
+  //       message.selected = true
+  //   })
+  //   this.setState({
+  //     messages: newMessages
   //   })
   // }
   
@@ -175,7 +207,8 @@ class App extends Component {
                 unread={this.state.unread}
                 currentUnread={this.currentUnread}
                 messages={this.state.messages}
-                selectionStage={this.selectionStage} />
+                selectAll={this.selectAll}
+                labelType={this.labelType} />
       {this.state.composeStatus && <Compose />}
       <MessageList  messages={this.state.messages}
                     starred={this.state.starred}

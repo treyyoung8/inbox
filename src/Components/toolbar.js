@@ -29,7 +29,7 @@ const Toolbar = (props) => {
 
                 <select className='form-control label-select'>
                     <option>Apply label</option>
-                    <option value='dev'>dev</option>
+                    <option value='dev' onClick={(event) => props.labelType(event)}>dev</option>
                     <option value='personal'>personal</option>
                     <option value='gschool'>gschool</option>
                 </select>

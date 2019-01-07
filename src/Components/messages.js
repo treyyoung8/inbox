@@ -13,7 +13,7 @@ const Message = ({starred, changeStar, subject, read, id, changeRead, expandBox,
     const dev = labels.includes('dev')
     const personal = labels.includes('personal')
     const gschool = labels.includes('gschool')
-    console.log(dev)
+    
     return (
         <>
             <div className={`row message ${read ? 'read' : 'unread'} ${(typeof selected !== 'undefined') && selected === true ? 'selected' : ''}`}>
